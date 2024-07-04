@@ -1,0 +1,3 @@
+import os
+
+os.environ['API_KEY'] = "vk1.a.l6IqAeaA4afc7nzmSN1xvyGUtg5glxZ0nB4y7YveRWEm9Pk2keNxLgbxEbEChv8Lry0ipNTz5JjnA7tkOO0TEInI8Ms76LaoI7KAlBJ99nDde_DUtXEgvpUQfO6kEydI84funWVriaRoQLfi8M8WjVM9ld9kRf8t6mutaqajmFg-QRrGZF8b_fGRy84SJsH_DOj94fxCYeA0Zwy7oJsh6Q"
