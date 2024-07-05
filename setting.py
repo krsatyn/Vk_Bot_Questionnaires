@@ -1,3 +1,5 @@
 import os
 
-os.environ['API_KEY'] = "vk1.a.l6IqAeaA4afc7nzmSN1xvyGUtg5glxZ0nB4y7YveRWEm9Pk2keNxLgbxEbEChv8Lry0ipNTz5JjnA7tkOO0TEInI8Ms76LaoI7KAlBJ99nDde_DUtXEgvpUQfO6kEydI84funWVriaRoQLfi8M8WjVM9ld9kRf8t6mutaqajmFg-QRrGZF8b_fGRy84SJsH_DOj94fxCYeA0Zwy7oJsh6Q"
+
+os.environ['API_KEY'] = "vk1.a.IXJeMKChxx-fuY0-kT-bgjBygmDONvQvzhvd88fLEQWmdx025bws-iF0PeVahsSTNijyJiEP1BTqmn1OiRiKu_6k8gWkMqAHD_ejVpdIiC2cD2HHf-9jUbRPlDoU6xfSso1alz4ZJOSkB4jDbPUcq-EMNmEiql7ioHhltFfF0M6imZcnvZtc2Ex0_j4Ii-20na7U55mFW-PgpM-TtKo1NQ"
+token = os.environ['API_KEY']
