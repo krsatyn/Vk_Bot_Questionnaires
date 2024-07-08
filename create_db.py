@@ -1,2 +1,5 @@
-from database_func import create_database, connection, create_database_query 
+from database_func import DataBase
 
+#Создается локальная база данных
+db = DataBase()
+db.build_empty_database()
