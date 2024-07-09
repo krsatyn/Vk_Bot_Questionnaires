@@ -1,4 +1,5 @@
-#database_func.py
+# database_func.py
+
 import sqlite3
 
 class DataBase():
@@ -6,6 +7,7 @@ class DataBase():
     def __init__(self, db_name:str="db") -> None:
         self.db_name = db_name
     
+    # Создаем бд
     def create_database(self, name_database:str) -> None:
 
         try:
@@ -175,66 +177,51 @@ class DataBase():
     # Создание анкеты пользователя
     def create_user(self, vk_user_id:str) -> None:
         connect = sqlite3.connect(self.db_name+".db")
-        cursor = connect.cursor()
-        #print(user_id)               
+        cursor = connect.cursor()           
+        
+        user_id_check = cursor.execute('SELECT * FROM UsersForm WHERE user_id LIKE (?)', (vk_user_id,)) 
+        
+        if len(user_id_check.fetchall()) > 0:
+            #print(len(user_id_check.fetchall()))
+            return 0
+        
         cursor.execute('INSERT INTO UsersForm (user_id) VALUES (?)', (vk_user_id,))
         connect.commit()
         connect.close()                
     
-    def post_user_name(self, user_name:str) -> None:
+    # Задаем имя пользователю
+    def update_user_name(self, vk_user_id:str, user_name:str)->None:
+        
         connect = sqlite3.connect(self.db_name+".db")
         cursor = connect.cursor()
         
-        cursor.execute('INSERT INTO UsersForm (name) VALUES (?)', (user_name,))
+        cursor.execute('UPDATE UsersForm SET name = ? WHERE user_id = ?', (user_name, vk_user_id))
         
         connect.commit()
         connect.close()
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
                                            
-    # Заполнение анкеты
-    def post_UsersForm(self, user_info:dict={"user_id":"", "user_name":"", "user_city":"", "user_age":0})->None:
-        '''Структура  user_info
-        {
-        user_id:str,
-        user_name:str,
-        user_city:str,
-        user_age:int,
-        }'''
-        
+    # задаем возраст пользователю
+    def update_user_age(self, vk_user_id:str, user_age:int)->None:
+    
         connect = sqlite3.connect(self.db_name+".db")
         cursor = connect.cursor()
-        
-        cursor.execute('INSERT INTO UsersForm (name, city, age) VALUES (?, ?, ?, ?)',  (user_info['user_id'], 
-                                                                                        user_info['user_name'], 
-                                                                                        user_info['user_city'], 
-                                                                                        user_info['user_age']))
-        self.connect.commit()
+
+        cursor.execute('UPDATE UsersForm SET age = ? WHERE user_id = ?', (user_age, vk_user_id))
+
+        connect.commit()
+        connect.close()
     
+    # Задаем город пользователя
+    def update_user_city(self, vk_user_id:str, user_city:str)->None:
+    
+        connect = sqlite3.connect(self.db_name+".db")
+        cursor = connect.cursor()
+
+        cursor.execute('UPDATE UsersForm SET city = ? WHERE user_id = ?', (user_city, vk_user_id))
+
+        connect.commit()
+        connect.close()
+        
     # Сборка бд
     def build_empty_database(self,) -> None:
         

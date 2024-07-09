@@ -1,3 +1,5 @@
+# main.py
+
 import vk_api as vk
 import text_message
 import sqlite3
@@ -33,12 +35,13 @@ for event in longpool.listen():
     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
             msg = event.text.lower()
             id = event.user_id
-            
+            # Стартовое сообщение
             if msg == "начать":
                 keyboard = VkKeyboard(one_time=True, )
                 keyboard.add_button(label="Приступим",color=VkKeyboardColor.POSITIVE)
                 send_some_message(id, text_message.start_message['hello_message'], keyboard)
-                
+            
+            # Начало заполнение основной анкеты    
             if msg == "приступим":
                 try:
                     keyboard = VkKeyboard(one_time=True, )
@@ -46,19 +49,104 @@ for event in longpool.listen():
                     send_some_message(id=id, some_text=text_message.user_form_message["name_question"])
                     
                     db.create_user(str(event.user_id))
+                    
+                    # Первое меню
                     key_word = ">name"
-                 
+                    #send_some_message(id=id, some_text=text_message.user_form_message["name_question"])
+
                 except (sqlite3.ProgrammingError, sqlite3.OperationalError) as error_message:
                     send_some_message(id, some_text="Ошибка:\n" + (error_message))
+            
+            # Заполнение возраста пользователя
+            if (key_word == ">age") and (text_message.msg_list.count(msg) == 0):
+               
+                try:
+                    msg = int(msg)
+                    db.update_user_age(vk_user_id=id, user_age=msg)
+                    key_word=""
+                    send_some_message(id=id, some_text=f'Анкета заполнена')
                     
-            if key_word == ">name":
-                db.post_user_name(msg)
+                    keyboard_menu = VkKeyboard(one_time=True, )
+                    
+                    keyboard_menu = VkKeyboard(one_time=True)
+                    keyboard_menu.add_button(label="Собрать или присоединиться к проектам", color=VkKeyboardColor.POSITIVE)
+                    keyboard_menu.add_line()
+                    keyboard_menu.add_button(label="Найти или стать наставником")
+                    keyboard_menu.add_line()
+                    keyboard_menu.add_button(label="Партнерские предложения (для проектов)")
+                    keyboard_menu.add_line()
+                    keyboard_menu.add_button(label="Найти друзей")
+                    keyboard_menu.add_line()
+                    keyboard_menu.add_button(label="Моя анкета")
+
+                    send_some_message(id, "Ты в меню", keyboard_menu)
+                    
+                    
+                except ValueError:
+                   send_some_message(id=id, some_text=f'Введи возраст цифрой')
+            
+            # Заполнение города пользователя
+            if (key_word== ">city") and (text_message.msg_list.count(msg) == 0):
+                db.update_user_city(vk_user_id=id, user_city=msg)
                 key_word=">age"
-                pass
+                send_some_message(id=id, some_text=f'Сколько тебе лет?')
             
-            if key_word == ">age":
-                print(2)
+            # Заполнение имени пользователя       
+            if (key_word == ">name") and (text_message.msg_list.count(msg) == 0):
+                
+                db.update_user_name(vk_user_id=id, user_name=msg)
+                send_some_message(id=id, some_text=f'Хорошо, {msg.capitalize()}. Откуда ты?')
+                key_word=">city"
             
-            if key_word== "city":
-                pass
+            if (msg == '/menu') or (msg == "назад в меню"):
+                keyboard_menu = VkKeyboard(one_time=True)
+                keyboard_menu.add_button(label="Собрать или присоединиться к проектам", color=VkKeyboardColor.POSITIVE)
+                keyboard_menu.add_line()
+                keyboard_menu.add_button(label="Найти или стать наставником")
+                keyboard_menu.add_line()
+                keyboard_menu.add_button(label="Партнерские предложения (для проектов)") # обьединить с функцией найти друзей
+                keyboard_menu.add_line()
+                keyboard_menu.add_button(label="Найти друзей ") # проверить
+                keyboard_menu.add_line()
+                keyboard_menu.add_button(label="Моя анкета")
+                
+                send_some_message(id, "Ты в меню", keyboard_menu)
+                
+            if msg == 'собрать или присоединиться к проектам':
+                keyboard_project_menu = VkKeyboard(one_time=True)
+                keyboard_project_menu.add_button(label="Собрать команду в проект", color=VkKeyboardColor.POSITIVE)
+                keyboard_project_menu.add_line()
+                keyboard_project_menu.add_button(label="Присоединиться к проекту")
+                keyboard_project_menu.add_line()
+                keyboard_project_menu.add_button(label="Назад в меню", color=VkKeyboardColor.NEGATIVE)
+                send_some_message(id, "Ты в меню Проектов", keyboard_project_menu)
+                      
+            if msg == 'найти или стать наставником':
+                keyboard_mentor_menu = VkKeyboard(one_time=True)
+                keyboard_mentor_menu.add_button(label="Найти наставника", color=VkKeyboardColor.POSITIVE)
+                keyboard_mentor_menu.add_line()
+                keyboard_mentor_menu.add_button(label="Стать наставником")
+                keyboard_mentor_menu.add_line()
+                keyboard_mentor_menu.add_button(label="Назад в меню", color=VkKeyboardColor.NEGATIVE)
+                send_some_message(id, "Ты в меню проектов", keyboard_mentor_menu)
             
+            if msg == 'найти друзей':
+                keyboard_frends_menu = VkKeyboard(one_time=True)
+                keyboard_frends_menu.add_button(label="text")
+                keyboard_frends_menu.add_line()
+                keyboard_frends_menu.add_button(label="text")
+                keyboard_frends_menu.add_line()
+                keyboard_frends_menu.add_button(label="Назад в меню", color=VkKeyboardColor.NEGATIVE)
+                send_some_message(id, "Ты в меню поиска друзей \n(не думай что ты найдешь их тут, у тебя их не может быть даже в теории. KEKWA)", keyboard_frends_menu)
+            
+            if msg == 'моя анкета':
+                keyboard_my_anketa_menu = VkKeyboard(one_time=True)
+                keyboard_my_anketa_menu.add_button(label="text", color=VkKeyboardColor.POSITIVE)
+                keyboard_my_anketa_menu.add_line()
+                keyboard_my_anketa_menu.add_button(label="text")
+                keyboard_my_anketa_menu.add_line()
+                keyboard_my_anketa_menu.add_button(label="Назад в меню", color=VkKeyboardColor.NEGATIVE)
+                send_some_message(id, "Ты в меню настроек СВОей анкеты", keyboard_my_anketa_menu)
+                
+            if msg == '':
+                send_some_message(id, "ПОХУЙ")
