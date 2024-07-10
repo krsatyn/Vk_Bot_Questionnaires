@@ -221,7 +221,21 @@ class DataBase():
 
         connect.commit()
         connect.close()
-        
+    
+    '''
+    # Создание анкеты проекта 
+    def create_project(self, vk_user_id:str)->None:
+        pass
+    
+    # Задаем имя проекта
+    def  update_name_project(self, vk_user_id:str, project_name:str)->None:
+        pass
+    
+    # Задаем описание проекта 
+    def update_description_create_project(self, vk_user_id:str, description:str)->None:
+        pass
+    '''   
+    
     # Сборка бд
     def build_empty_database(self,) -> None:
         
