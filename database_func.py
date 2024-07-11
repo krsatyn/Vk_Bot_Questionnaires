@@ -61,6 +61,7 @@ class DataBase():
             CREATE TABLE IF NOT EXISTS ProjectsForm (
             id INTEGER PRIMARY KEY,
             user_id TEXT,
+            project_name TEXT,
             project_info TEXT,
             find_teams TEXT 
             )                            

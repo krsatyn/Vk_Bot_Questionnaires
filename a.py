@@ -1,12 +1,11 @@
-a = {"s":2, "q":1, "q1":33}
-
-
-a_key = list(a.keys())
-
-input_message = "12"
-
-print(a.get(123))
-# if input_message in a_key:
-#     print(a[input_message]) 
+from copy import deepcopy
+class A():
+    def test():
+        pass
     
-#     print(f"куда записываем:{a[input_message]}")
+a = A 
+
+dict_1 = {'a':a, 'b':"", 's':{'s':1}}
+
+dict_2 = deepcopy(dict_1)
+print(dict_2)
