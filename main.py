@@ -187,15 +187,6 @@ for event in longpool.listen():
                 project_anketa.main(vk_user_id=id, msg=msg)
                 print(section_kw)
             
-            # создание меню 
-            if (section_kw == 'project_anketa') and (msg != "назад в меню") and (msg != '/menu'):
-                
-                project_anketa.get_anketa_menu(vk_user_id=id)
-
-            # Вызов основного функционала
-            if section_kw == 'project_anketa':
-                project_anketa.main(msg=msg, vk_user_id=id)
-                
                     
             if msg == 'найти или стать наставником':
                 keyboard_mentor_menu = VkKeyboard(one_time=True)
@@ -227,8 +218,9 @@ for event in longpool.listen():
                 keyboard_my_anketa_menu.add_button(label="Редактировать мою анкету", color=VkKeyboardColor.POSITIVE)
                 keyboard_my_anketa_menu.add_line()
                 keyboard_my_anketa_menu.add_button(label="Назад в меню", color=VkKeyboardColor.NEGATIVE)
-                send_some_message(id, "Тут должна быть твоя анкета, но мне похуй", keyboard_my_anketa_menu)
-            
+                message = db.get_user_anketa_info(vk_user_id=id)
+                send_some_message(id, message, keyboard_my_anketa_menu)
+                
             if (msg == 'редактировать мою анкету'):
                 keyboard_redact_my_anketa = VkKeyboard(one_time=True)
                 keyboard_redact_my_anketa.add_button(label="Имя")

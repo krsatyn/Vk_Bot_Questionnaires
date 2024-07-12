@@ -6,7 +6,7 @@ import vk_api as vk
 
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.longpoll import VkLongPoll, VkEventType
-
+from numpy import random
 
 class AnketaConstruct():
     
@@ -76,9 +76,22 @@ class AnketaConstruct():
         else:
             self.__send_some_message(id=vk_user_id, some_text="У вас еще нет анкеты. Давайте заполним её")
             
+            
     # Получить всю информацию об анкете
     def get_anketa_info(self,):
         pass    
+    
+    # Поиск других анкет
+    def find_another_anketa(self, id_vk_user:str):
+        connect = sqlite3.connect(self.db.db_name+".db")
+        cursor = connect.cursor()
+        
+        cursor.execute('',())
+        
+        
+        random_user = random.randint()
+        
+        self.__send_some_message(id=id_vk_user, )
     
     # Обновления значений в БД
     def update_anceta_column(self, vk_user_id:str, column_name:str=None, column_meaning:str=""):
@@ -164,7 +177,7 @@ class AnketaConstruct():
                 self.kw = 'anketa_menu'
                 self.__send_some_message(vk_user_id, some_text='Анкета заполена)')
                 return 0
-                
+        
         # Начало работы  
         if msg == self.create_kw:
             
@@ -172,9 +185,14 @@ class AnketaConstruct():
             self.__send_some_message(vk_user_id, some_text= self.message_instruction["start"])
             self.kw = "start"
         
-        if msg == 'Моя анкета':
+        if msg == 'моя анкета':
             ''
+        
+        # Поиск анкет
+        if msg == 'поиск':
+            self.find_another_anketa()
             
+        
         if (self.kw == 'anketa_menu') or (msg == "/anketa_menu") or ("Вернуться в меню поиска"):
             self.get_anketa_menu(vk_user_id)
             

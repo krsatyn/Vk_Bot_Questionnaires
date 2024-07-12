@@ -237,6 +237,20 @@ class DataBase():
         pass
     '''   
     
+    # Получение данных пользователя
+    def get_user_anketa_info(self,vk_user_id:str):
+         
+        connect = sqlite3.connect(self.db_name+".db")
+        cursor = connect.cursor()  
+        user_id_check = cursor.execute('SELECT * FROM UsersForm WHERE user_id LIKE (?)', (vk_user_id,)).fetchall()[0]
+        
+        message = f"Имя: {str(user_id_check[2]).title()}\nГород: {str(user_id_check[3]).title()}\nВозраст: {str(user_id_check[4]).title()}лет"
+        
+        return message
+        
+        
+    # Редактирование анкеты
+    
     # Сборка бд
     def build_empty_database(self,) -> None:
         
