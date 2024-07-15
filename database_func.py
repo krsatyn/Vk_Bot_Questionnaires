@@ -175,6 +175,31 @@ class DataBase():
             print(f"->Имя таблицы |просто друзья|")
             print(f"->Название таблицы JustFriends")
     
+    # Создание таблицы ссылки
+    def create_links_from_table(self,) -> None:
+        '''Создание таблицы
+        |id:int key|link:str|
+        '''
+        
+        cursor = self.connect.cursor()
+        
+        try:
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Links (
+            id INTEGER PRIMARY KEY,
+            link_name TEXT,
+            link TEXT 
+            )                            
+            ''')
+
+            self.connect.commit()
+            print(">Таблица Links успешно создана")
+        
+        except sqlite3.OperationalError:
+            print("\n> Ошибка создания таблицы")
+            print(f"->Имя таблицы |Ссылки|")
+            print(f"->Название таблицы Links")
+    
     # Создание анкеты пользователя
     def create_user(self, vk_user_id:str) -> None:
         connect = sqlite3.connect(self.db_name+".db")
@@ -260,7 +285,8 @@ class DataBase():
         self.create_one_formers_from_table()
         self.create_partner_offers_from_table()
         self.create_just_friends_from_table()
-    
+        self.create_links_from_table()
+        
     # Создание бекапов
     def create_backup(self, ) -> None:
         pass

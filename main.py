@@ -161,32 +161,28 @@ for event in longpool.listen():
                 keyboard_project_menu.add_button(label="Назад в меню", color=VkKeyboardColor.NEGATIVE)
                 send_some_message(id, "Ты в меню Проектов", keyboard_project_menu)
             
-            if msg == "собрать команду в проект":
-                
-                print("мы внутри")
-                
-                anketa_setting_dict = copy.deepcopy(setting_dict)
-                anketa_setting_dict['create_kw'] = 'cобрать команду в проект'
+            if (msg == "собрать команду в проект"):
 
-                anketa_setting_dict['table_name'] = 'ProjectsForm'
+                    section_kw = "project_anketa"
+                    anketa_setting_dict = copy.deepcopy(setting_dict)
+                    anketa_setting_dict['create_kw'] = 'cобрать команду в проект'
 
-                anketa_setting_dict['instruction']['start'] = 'project_name'
-                anketa_setting_dict['instruction']['info'] = 'project_info'
-                anketa_setting_dict['instruction']['teams'] = 'find_teams'
+                    anketa_setting_dict['table_name'] = 'ProjectsForm'
 
-                anketa_setting_dict['message_instruction']['start'] = "Напишите название проекта"
-                anketa_setting_dict['message_instruction']['info'] = "Опишите ваш проект"
-                anketa_setting_dict['message_instruction']['teams'] = "Опишите кого вы ищете"
+                    anketa_setting_dict['instruction']['start'] = 'project_name'
+                    anketa_setting_dict['instruction']['info'] = 'project_info'
+                    anketa_setting_dict['instruction']['teams'] = 'find_teams'
+
+                    anketa_setting_dict['message_instruction']['start'] = "Напишите название проекта"
+                    anketa_setting_dict['message_instruction']['info'] = "Опишите ваш проект"
+                    anketa_setting_dict['message_instruction']['teams'] = "Опишите кого вы ищете"
                 
-                project_anketa = AnketaConstruct(session_api=session_api,
-                                                 vk_session=vk_session,
-                                                 longpool=longpool,
-                                                 setting_dict=anketa_setting_dict)
-                
-                section_kw = 'project_anketa'
+                    project_anketa = AnketaConstruct(session_api=session_api,
+                                                     vk_session=vk_session,
+                                                     longpool=longpool,
+                                                     setting_dict=anketa_setting_dict) 
+            if section_kw == "project_anketa":
                 project_anketa.main(vk_user_id=id, msg=msg)
-                print(section_kw)
-            
                     
             if msg == 'найти или стать наставником':
                 keyboard_mentor_menu = VkKeyboard(one_time=True)
@@ -213,7 +209,7 @@ for event in longpool.listen():
                 keyboard_partner_offer_menu.add_button(label="Назад в меню", color=VkKeyboardColor.NEGATIVE)
                 send_some_message(id, "Ты в меню настроек партнерские предложений для проектов", keyboard_partner_offer_menu)
   
-            if msg == 'моя анкета':
+            if msg == 'моя анкета' and section_kw=="":
                 keyboard_my_anketa_menu = VkKeyboard(one_time=True)
                 keyboard_my_anketa_menu.add_button(label="Редактировать мою анкету", color=VkKeyboardColor.POSITIVE)
                 keyboard_my_anketa_menu.add_line()
