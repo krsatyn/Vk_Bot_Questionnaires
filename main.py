@@ -62,7 +62,10 @@ setting_dict_2['instruction']['teams'] = 'find_teams'
 setting_dict_2['message_instruction']['start'] = "Напишите название проекта"
 setting_dict_2['message_instruction']['info'] = "Опишите ваш проект"
 setting_dict_2['message_instruction']['teams'] = "Опишите кого вы ищете"
+
+setting_dict_2['column_instruction'][]
 '''
+
 section_kw = ""
 
 for event in longpool.listen():
@@ -150,8 +153,7 @@ for event in longpool.listen():
                 send_some_message(id, "Ты в меню", keyboard_menu)
                 
                 section_kw = ''
-            
-                
+                          
             if msg == 'собрать или присоединиться к проектам':
                 keyboard_project_menu = VkKeyboard(one_time=True)
                 keyboard_project_menu.add_button(label="Собрать команду в проект", color=VkKeyboardColor.POSITIVE)
@@ -181,9 +183,31 @@ for event in longpool.listen():
                                                      vk_session=vk_session,
                                                      longpool=longpool,
                                                      setting_dict=anketa_setting_dict) 
+                    
             if section_kw == "project_anketa":
                 project_anketa.main(vk_user_id=id, msg=msg)
-                    
+            
+            if (msg == "присоединиться к проекту"):
+                
+                section_kw = "find_project_anketa"
+                
+                anketa_setting_dict = copy.deepcopy(setting_dict)
+                anketa_setting_dict['create_kw'] = 'присоединиться к проектам'
+
+                anketa_setting_dict['table_name'] = 'ProjectFinder'
+
+                anketa_setting_dict['instruction']['start'] = 'user_info'
+
+                anketa_setting_dict['message_instruction']['start'] = "Опишите себя"
+                
+                project_finder_anketa = AnketaConstruct(session_api=session_api,
+                                                 vk_session=vk_session,
+                                                 longpool=longpool,
+                                                 setting_dict=anketa_setting_dict)
+                
+            if section_kw == 'find_project_anketa':
+                project_finder_anketa.main(vk_user_id=id, msg=msg)
+                
             if msg == 'найти или стать наставником':
                 keyboard_mentor_menu = VkKeyboard(one_time=True)
                 keyboard_mentor_menu.add_button(label="Найти наставника", color=VkKeyboardColor.POSITIVE)
@@ -193,6 +217,27 @@ for event in longpool.listen():
                 keyboard_mentor_menu.add_button(label="Назад в меню", color=VkKeyboardColor.NEGATIVE)
                 send_some_message(id, "Ты в меню проектов", keyboard_mentor_menu)
             
+            if msg == 'найти наставника':
+                section_kw = 'find_mentor'
+                anketa_setting_dict = copy.deepcopy(setting_dict)
+                anketa_setting_dict['create_kw'] = 'найти наставника'
+                
+                anketa_setting_dict['table_name'] = ''
+                
+                anketa_setting_dict['instruction']['start'] = ''
+                anketa_setting_dict['instruction'][''] = ''
+                
+                anketa_setting_dict['message_instruction']['start'] = ""
+                anketa_setting_dict['message_instruction'][''] = ""
+                
+                find_mentor_anketa = AnketaConstruct(session_api=session_api,
+                                                     vk_session=vk_session,
+                                                     longpool=longpool,
+                                                     setting_dict=anketa_setting_dict)
+            
+            if section_kw == 'find_mentor':
+                find_mentor_anketa.main(vk_user_id=id, msg=msg)
+                
             if msg == 'найти друзей или однофорумчан':
                 keyboard_frends_and_forum_member_menu = VkKeyboard(one_time=True)
                 keyboard_frends_and_forum_member_menu.add_button(label="Найти друзей")

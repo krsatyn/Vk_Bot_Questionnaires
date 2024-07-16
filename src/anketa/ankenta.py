@@ -1,5 +1,4 @@
 # ankenta.py
-# main.py
 
 import sqlite3
 import vk_api as vk
@@ -29,7 +28,7 @@ class AnketaConstruct():
         self.message_counter = 0
         
     # Отправка соообщений    
-    def __send_some_message(self, id, some_text, keyboard=None):
+    def __send_some_message(self, id, some_text, keyboard=None) -> None:
     
         post = {
             "user_id":id, 
@@ -65,7 +64,7 @@ class AnketaConstruct():
         anketa_menu.add_button(label="вернуться в меню поиска",color=VkKeyboardColor.NEGATIVE)    
              
     # Проверка на наличии анкеты
-    def check_anketa(self,  table_name:str, vk_user_id):
+    def check_anketa(self,  table_name:str, vk_user_id) -> None:
         
         check_anketa_keyboard = VkKeyboard(one_time=1)
         check_anketa_keyboard.add_button(label="Заполнить анкету", color=VkKeyboardColor.POSITIVE)
@@ -93,20 +92,40 @@ class AnketaConstruct():
 
         else:
             self.kw = 'anketa_menu'
-            
+    
+    def edit_anketa(self,) -> None:
+        pass
+    
+    '''    
+    def get_keyboard_edit_anketa() -> None:
+        keyboard = VkKeyboard(one_time=True)
+        
+        for index in range(len()):
+            keyboard.add_button(label=,)
+
+        keyboard.add_button(label='', color=VkKeyboardColor.NEGATIVE)
+    '''    
     # Получить всю информацию об анкете
-    def get_anketa_info(self, vk_user_id:str,):
+    def get_anketa_info(self, vk_user_id:str,) -> None:
         
         connect = sqlite3.connect(self.db.db_name+".db")
         cursor = connect.cursor()
         
-        anketa_info = ''
+        __SELECT_text = f'SELECT * FROM {self.table_name} WHERE user_id LIKE (?)'
         
-        anketa_message = f"{anketa_info[2]}\n{anketa_info[3]}\n{anketa_info[4]}"
-        self.__send_some_message(id=vk_user_id, some_text="")
+        anketa_info = list(cursor.execute(__SELECT_text, (vk_user_id,)).fetchall()[0])
+        
+        print(f'{anketa_info=}')
+        
+        anketa_message = ''
+        
+        for index in range(2, len(anketa_info)):
+            anketa_message_line = f'{anketa_info[index].capitalize()}\n\n'        
+            anketa_message += anketa_message_line
+        self.__send_some_message(id=vk_user_id, some_text=anketa_message)
       
     # Обновления значений в БД
-    def update_anceta_column(self, vk_user_id:str, column_name:str=None, column_meaning:str=""):
+    def update_anceta_column(self, vk_user_id:str, column_name:str=None, column_meaning:str="") -> None:
         connect = sqlite3.connect(self.db.db_name+".db")
         cursor = connect.cursor()
         
@@ -117,15 +136,15 @@ class AnketaConstruct():
         connect.close()
     
     # Начало поиска анкет                
-    def start_find(self,):
+    def start_find(self,) -> None:
         pass
     
     # Конец поиска анкет
-    def cancel_find(self,):
+    def cancel_find(self,) -> None:
         pass
     
     # Регистрация пользователя 
-    def register_user(self, vk_user_id):
+    def register_user(self, vk_user_id) -> None:
         
         table_name = self.table_name
         
@@ -144,51 +163,37 @@ class AnketaConstruct():
         connect.close()  
     
     # Создание анкеты пользователя
-    def create_anketa(self, vk_user_id, msg):
-        
-        #клавиа
-        
-        # Получение параметров анкеты
+    def create_anketa(self, vk_user_id, msg) -> None:
         instruction = self.instruction
-        #print("словарь инструкций",instruction)
-        
         key_word_list = list(self.instruction.keys())
         key_word_counter = len(key_word_list)
-        
         message_instruction = self.message_instruction
-        
         next_button = VkKeyboard(one_time=True)
-        next_button.add_button(label='Далее')        
-        #print(self.message_counter)
+        next_button.add_button(label='Далее')
         
-        try:
-            if self.message_counter % 2 == 0:
-                print("Мы отправляем")
-                self.__send_some_message(id=vk_user_id, some_text=message_instruction[key_word_list[self.message_counter]])
-                self.message_counter +=1
-
-                print(self.message_counter)
-
-            else:
-                print("Мы слушаем")
-                self.update_anceta_column(vk_user_id=vk_user_id, 
-                                          column_name=instruction[key_word_list[self.message_counter-1]],
+        if self.counter == key_word_counter:
+            print("Обнулили")
+            self.message_counter = 0
+            self.kw = 'anketa_menu'
+        
+        if (msg == 'далее') or (msg =='хорошо, создадим анкету'):
+            self.__send_some_message(id=vk_user_id, some_text=message_instruction[key_word_list[self.counter]])
+            self.counter +=1
+        
+        else:
+            self.update_anceta_column(vk_user_id=vk_user_id, 
+                                          column_name=instruction[key_word_list[self.counter-1]],
                                           column_meaning=msg)
-                self.message_counter +=1
-                print(self.message_counter)
-
-            if key_word_counter*2 == self.message_counter:
-                print("Обнулили")
-                self.message_counter = 0
-                self.kw = 'anketa_menu'
-        
-        except IndexError:
-                print("Обнулили")
-                self.message_counter = 0
-                self.kw = 'anketa_menu'
-                
+            
+            self.__send_some_message(id=vk_user_id, some_text="После ввода информации, нажмите далее", keyboard=next_button)
+            
+        if  key_word_counter*2 == self.message_counter:
+            print("Обнулили")
+            self.message_counter = 0
+            self.kw = 'anketa_menu'
+                 
     # Редактирование анкеты
-    def edit_anketa(self,):
+    def edit_anketa(self,) -> None:
         pass
     
     # Основное меню анкеты
@@ -207,7 +212,6 @@ class AnketaConstruct():
         
         self.__send_some_message(vk_user_id, "Ты в меню", menu_keyboard)
         
-    
     # Просмотр ответов на анкету
     def response_anketa(self,)-> None:
         pass
@@ -215,16 +219,21 @@ class AnketaConstruct():
     # Ссылка на обратную связь
     def get_callback_link(self, vk_user_id) -> None:
         
-        connect = sqlite3.connect(self.db.db_name+".db")
-        cursor = connect.cursor()
+        try:
+            connect = sqlite3.connect(self.db.db_name+".db")
+            cursor = connect.cursor()
+
+            link = list(cursor.execute(f"SELECT * FROM Links").fetchall())[0][2]
+
+            message = f"Если вы хотите написать отзыв о нашем боте, то перейдите по ссылке:\n{link}"
+            self.__send_some_message(id=vk_user_id, some_text=message)
         
-        link = list(cursor.execute(f"SELECT * FROM Links").fetchall())[0][2]
-        
-        message = f"Если вы хотите написать отзыв о нашем боте, то перейдите по ссылке:\n{link}"
-        self.__send_some_message(id=vk_user_id, some_text=message)
-            
-            
-    def main(self, msg:str, vk_user_id:str):
+        except IndexError:
+            message = f"Ссылки пока что нет"
+            self.__send_some_message(id=vk_user_id, some_text=message)
+          
+   # Тело класса анкеты         
+    def main(self, msg:str, vk_user_id:str) -> None:
         
         #print(msg)
         #print(f"{self.kw=}")

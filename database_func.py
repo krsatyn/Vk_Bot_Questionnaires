@@ -22,7 +22,7 @@ class DataBase():
         return 0
 
     # Создание таблицы для анкеты пользователя
-    def create_users_form_table(self, ) -> None:
+    def create_users_form_table(self,) -> None:
         '''Создание таблицы
         |id:int key|user_id:str|name:str|city:str|age:int|
         '''
@@ -46,10 +46,10 @@ class DataBase():
         except sqlite3.OperationalError:
             print("\n> Ошибка создания таблицы")
             print(f"->Имя таблицы |таблица для анкеты пользователя|")
-            print(f"->Навзание таблицы UsersForm")
+            print(f"->Название таблицы UsersForm")
 
     # Создание таблицы для анкет проектов
-    def create_projects_form_table(self, ) -> None:
+    def create_projects_form_table(self,) -> None:
         '''Создание таблицы
         |id:int key|user_id:str|project_info:str|find_teams:str|
         '''
@@ -73,8 +73,34 @@ class DataBase():
         except sqlite3.OperationalError:
             print("\n> Ошибка создания таблицы")
             print(f"->Имя таблицы |таблица для анкет проектов|")
-            print(f"->Навзание таблицы ProjectsForm")
+            print(f"->Название таблицы ProjectsForm")
+    
+    # Таблица пользователя для поиска проектов 
+    def create_project_finder_from_table(self,) -> None:
+        '''Создание таблицы
+        |id:int key|user_id:str|name:str|user_info:str|
+        '''
+        
+        cursor = self.connect.cursor()
+        
+        try:
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS ProjectFinder(
+            id INTEGER PRIMARY KEY,
+            user_id TEXT,
+            name TEXT,
+            user_info TEXT 
+            )                            
+            ''')
 
+            self.connect.commit()
+            print(">Таблица ProjectFinder успешно создана")
+        
+        except sqlite3.OperationalError:
+            print("\n> Ошибка создания таблицы")
+            print(f"->Имя таблицы |Таблица пользователя для поиска проектов|")
+            print(f"->Название таблицы ProjectFinder")
+    
     # Создание таблицы анкеты для поиска однофорумчан
     def create_one_formers_from_table(self,) -> None:
         '''Создание таблицы
@@ -98,7 +124,7 @@ class DataBase():
         except sqlite3.OperationalError:
             print("\n> Ошибка создания таблицы")
             print(f"->Имя таблицы |таблица для анкет проектов|")
-            print(f"->Навзание таблицы one_formers")
+            print(f"->Название таблицы one_formers")
         
     # Создание таблицы анкета наставника
     def create_mentors_profile_from_table(self,) -> None:
@@ -246,21 +272,7 @@ class DataBase():
         cursor.execute('UPDATE UsersForm SET city = ? WHERE user_id = ?', (user_city, vk_user_id))
 
         connect.commit()
-        connect.close()
-    
-    '''
-    # Создание анкеты проекта 
-    def create_project(self, vk_user_id:str)->None:
-        pass
-    
-    # Задаем имя проекта
-    def  update_name_project(self, vk_user_id:str, project_name:str)->None:
-        pass
-    
-    # Задаем описание проекта 
-    def update_description_create_project(self, vk_user_id:str, description:str)->None:
-        pass
-    '''   
+        connect.close()   
     
     # Получение данных пользователя
     def get_user_anketa_info(self,vk_user_id:str):
@@ -273,19 +285,20 @@ class DataBase():
         
         return message
         
-        
     # Редактирование анкеты
     
     # Сборка бд
     def build_empty_database(self,) -> None:
         
         self.create_database(name_database=self.db_name)
+        
         self.create_users_form_table()
         self.create_projects_form_table()
         self.create_one_formers_from_table()
         self.create_partner_offers_from_table()
         self.create_just_friends_from_table()
         self.create_links_from_table()
+        self.create_project_finder_from_table()
         
     # Создание бекапов
     def create_backup(self, ) -> None:
