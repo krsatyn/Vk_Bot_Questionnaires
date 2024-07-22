@@ -25,7 +25,8 @@ class AnketaConstruct():
         self.kw:str = "anketa_check"                                        # Ключевое слово    
         self.counter:int = 0                                                # Счетчик включений ключевого слова инструкций
         self.message_instruction:dict = setting_dict['message_instruction'] # Сообщения для пользователя 
-        self.message_counter = 0
+        self.message_counter = 0                                            # Счётчик сообщений
+        self.related_table:str = setting_dict['related_table']                                          # Связанная таблица (для получения информации с других таблиц)
         
     # Отправка соообщений    
     def __send_some_message(self, id, some_text, keyboard=None) -> None:
@@ -87,7 +88,7 @@ class AnketaConstruct():
         
         anketa_info = list(cursor.execute(__SELECT_text, (vk_user_id,)).fetchall()[0])
         
-        print(f'{anketa_info=}')
+        #print(f'{anketa_info=}')
         
         anketa_message = ''
         
@@ -236,18 +237,43 @@ class AnketaConstruct():
             message = f"Ссылки пока что нет"
             self.__send_some_message(id=vk_user_id, some_text=message)
     
-    def find_menu(self, vk_user_id) ->None:
-        
-        find_menu_keyboard = VkKeyboard(one_time=True)
-        find_menu_keyboard.add_button()
-        find_menu_keyboard.add_line()
-        find_menu_keyboard.add_button('вернуться в меню поиска', color=VkKeyboardColor.NEGATIVE)
-    
     # Начало поиска анкет                
-    def start_find(self,) -> None:
-        pass
+    def start_find(self, vk_user_id) -> None:
+        
+        table_name = self.related_table
+        
+        if table_name is None:
+            pass
+        
+        connect = sqlite3.connect(self.db.db_name+".db")
+        cursor = connect.cursor()
+        
+        print(table_name,"<<<<<<<")
+        
+        __TEXT = f'SELECT * FROM {table_name} ORDER BY RANDOM() LIMIT 1;'
+        
+        random_anketa = list(cursor.execute(__TEXT).fetchall()[0])
+        
+        
+        anketa_info = ""
+        
+        for index in range(2, len(random_anketa)):
+            anketa_info += f'{str(random_anketa[index]).capitalize()}\n'
+        
+        
+        find_keyboard = VkKeyboard(one_time=True)
+        find_keyboard.add_button("👍")
+        find_keyboard.add_button("👎")
+        find_keyboard.add_line()
+        find_keyboard.add_button("Вернуться в меню поиска", color=VkKeyboardColor.NEGATIVE)
+        
+        self.__send_some_message(id=vk_user_id, some_text=anketa_info, keyboard=find_keyboard)
                 
-   # Тело класса анкеты         
+        print(random_anketa)
+        
+                        
+                
+    # Тело класса анкеты         
     def main(self, msg:str, vk_user_id:str) -> None:
     
         # Проверка на наличие анкеты
@@ -265,6 +291,13 @@ class AnketaConstruct():
         if (self.kw == 'create_anketa'):
             #print("Отрабатываем")
             self.create_anketa(vk_user_id=vk_user_id, msg=msg)
+        
+        # Поиск 
+        if msg == "поиск" or msg =='👎':
+            self.kw = "find_anketa"
+            
+        if (self.kw == "find_anketa") :
+            self.start_find(vk_user_id=vk_user_id)
         
         # Отправка обратной связи о боте
         if msg == 'написать отзыв о боте':
@@ -285,3 +318,4 @@ class AnketaConstruct():
         # Основное меню анкеты
         if (self.kw == 'anketa_menu') or (msg == "/anketa_menu") or (msg =="вернуться в меню поиска"):
             self.get_anketa_menu(vk_user_id)
+            self.kw = "anketa_menu"
