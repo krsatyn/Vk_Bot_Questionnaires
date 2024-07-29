@@ -26,7 +26,7 @@ class AnketaConstruct():
         self.counter:int = 0                                                # Счетчик включений ключевого слова инструкций
         self.message_instruction:dict = setting_dict['message_instruction'] # Сообщения для пользователя 
         self.message_counter = 0                                            # Счётчик сообщений
-        self.related_table:str = setting_dict['related_table']                                          # Связанная таблица (для получения информации с других таблиц)
+        self.related_table:str = setting_dict['related_table']              # Связанная таблица (для получения информации с других таблиц)
         
     # Отправка соообщений    
     def __send_some_message(self, id, some_text, keyboard=None) -> None:
@@ -237,7 +237,7 @@ class AnketaConstruct():
             message = f"Ссылки пока что нет"
             self.__send_some_message(id=vk_user_id, some_text=message)
     
-    # Начало поиска анкет                
+    # Поиски анкет                
     def start_find(self, vk_user_id) -> None:
         
         table_name = self.related_table
@@ -270,8 +270,14 @@ class AnketaConstruct():
         self.__send_some_message(id=vk_user_id, some_text=anketa_info, keyboard=find_keyboard)
                 
         print(random_anketa)
-        
-                        
+    
+    # Отправка отклика
+    def post_callback(self, vk_user_id) -> None:
+        pass
+    
+    # Просмотр откликов    
+    def get_callback(self, vk_user_id) -> None:
+        pass
                 
     # Тело класса анкеты         
     def main(self, msg:str, vk_user_id:str) -> None:
