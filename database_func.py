@@ -75,7 +75,34 @@ class DataBase():
             print(f"->Имя таблицы |таблица для анкет проектов|")
             print(f"->Название таблицы ProjectsForm")
     
-    # Таблица пользователя для поиска проектов 
+    # Таблица для лайкнувших проект
+    def create_callback_projects_form_table(self,):
+        '''Создание таблицы
+        |id:int key|user_id:str|like_user_id:str|info:str|
+        '''
+        
+        cursor = self.connect.cursor()
+        
+        try:
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS CallbackProjectsForm (
+            id INTEGER PRIMARY KEY,
+            user_id TEXT,
+            like_user_id TEXT,
+            like_user_name,
+            user_info TEXT 
+            )                            
+            ''')
+
+            self.connect.commit()
+            print(">Таблица CallbackProjectsForm успешно создана")
+        
+        except sqlite3.OperationalError:
+            print("\n> Ошибка создания таблицы")
+            print(f"->Имя таблицы |таблица для лайков анкеты проектов|")
+            print(f"->Название таблицы CallbackProjectsForm")
+    
+    # Таблица пользователя для поиска разработчика 
     def create_project_finder_from_table(self,) -> None:
         '''Создание таблицы
         |id:int key|user_id:str|name:str|user_info:str|
@@ -100,6 +127,33 @@ class DataBase():
             print("\n> Ошибка создания таблицы")
             print(f"->Имя таблицы |Таблица пользователя для поиска проектов|")
             print(f"->Название таблицы ProjectFinder")
+    
+    # Таблица для лайкнувших разработчика
+    def create_callback_project_finder_from_table(self,):
+        '''Создание таблицы
+        |id:int key|user_id:str|project_info:str|find_teams:str|
+        '''
+        
+        cursor = self.connect.cursor()
+        
+        try:
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS CallbackProjectsFinderForm (
+            id INTEGER PRIMARY KEY,
+            user_id TEXT,
+            like_user_id TEXT,
+            like_user_name TEXT,
+            info TEXT 
+            )                            
+            ''')
+
+            self.connect.commit()
+            print(">Таблица CallbackProjectsFinderForm успешно создана")
+        
+        except sqlite3.OperationalError:
+            print("\n> Ошибка создания таблицы")
+            print(f"->Имя таблицы |таблица для лайков анкеты проектов|")
+            print(f"->Название таблицы CallbackProjectsFinderForm")
     
     # Создание таблицы анкеты для поиска однофорумчан
     def create_one_formers_from_table(self,) -> None:
@@ -299,6 +353,8 @@ class DataBase():
         self.create_just_friends_from_table()
         self.create_links_from_table()
         self.create_project_finder_from_table()
+        self.create_callback_projects_form_table()
+        self.create_callback_project_finder_from_table()
         
     # Создание бекапов
     def create_backup(self, ) -> None:

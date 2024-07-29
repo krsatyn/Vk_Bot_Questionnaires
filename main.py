@@ -38,7 +38,8 @@ setting_dict = {"db":db,
                 "instruction":{"start":"",},
                 "create_kw":"",
                 "message_instruction":{"start":""},
-                "related_table":None}
+                "related_table":None,
+                "callback_table":None}
 
 '''
 # Анкета 1
@@ -180,7 +181,8 @@ for event in longpool.listen():
                     anketa_setting_dict['message_instruction']['info'] = "Опишите ваш проект"
                     anketa_setting_dict['message_instruction']['teams'] = "Опишите кого вы ищете"
                     anketa_setting_dict['related_table'] = 'ProjectFinder'
-                
+                    anketa_setting_dict['callback_table'] = 'CallbackProjectsForm'
+                    
                     project_anketa = AnketaConstruct(session_api=session_api,
                                                      vk_session=vk_session,
                                                      longpool=longpool,
