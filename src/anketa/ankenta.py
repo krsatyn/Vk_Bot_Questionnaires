@@ -290,7 +290,7 @@ class AnketaConstruct():
         find_keyboard.add_button("👎")
         find_keyboard.add_line()
         find_keyboard.add_button("Вернуться в меню поиска", color=VkKeyboardColor.NEGATIVE)
-        self.__send_some_message(id=vk_user_id, some_text="Отпрвлена заявка", keyboard=find_keyboard)
+        self.__send_some_message(id=vk_user_id, some_text="Заявка отправлена", keyboard=find_keyboard)
         
         #print(f"{like_anketa_id=}")
         
@@ -300,7 +300,7 @@ class AnketaConstruct():
         connect = sqlite3.connect(self.db.db_name+".db")
         cursor = connect.cursor()
         
-        # Получеаем всю актуальную информацию о пользователе
+        # Получаеем всю актуальную информацию о пользователе
         info_text = f'SELECT * FROM {anketa_table_name} WHERE user_id LIKE {vk_user_id}'
         like_user_info = list(cursor.execute(info_text).fetchall())[0]
     
@@ -315,10 +315,16 @@ class AnketaConstruct():
         user_info += "><"
         
         #check_info = f'SELECT * FROM {callback_table_name} WHERE user_id LIKE {vk_user_id}'
-                
+        check_info = f'SELECT user_id, like_user_id FROM {callback_table_name} WHERE user_id = {user_id} AND like_user_id = {like_anketa_id} GROUP BY user_id, like_user_id HAVING COUNT(user_id) > 1 AND COUNT(like_user_id) > 1;'
+        info = cursor.execute(check_info).fetchall()
+        #print(info)
+        
         # Отправляем информацию в таблицу обратной связи
-        post_in_callback_table_text = f'INSERT INTO {callback_table_name} (user_id, like_user_id, like_user_name, user_info) VALUES {user_id, like_anketa_id, like_anketa_username, user_info}'
-        cursor.execute(post_in_callback_table_text)  
+        
+        if len(info) == 0:
+            post_in_callback_table_text = f'INSERT OR REPLACE INTO {callback_table_name} (user_id, like_user_id, like_user_name, user_info) VALUES {user_id, like_anketa_id, like_anketa_username, user_info}'
+            cursor.execute(post_in_callback_table_text)
+        
         connect.commit()
         connect.close()   
     #'''
