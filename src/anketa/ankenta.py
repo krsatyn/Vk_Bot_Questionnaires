@@ -65,9 +65,6 @@ class AnketaConstruct():
         
         user_id_check = cursor.execute(__SELECT_text, (vk_user_id,)).fetchall()
         
-        #print(user_id_check)
-        #print(f"{len(list(user_id_check))}")
-        
         if len(user_id_check) == 0:
                         
             confirmation_keyboard = VkKeyboard(one_time=True)
@@ -89,8 +86,6 @@ class AnketaConstruct():
         __SELECT_text = f'SELECT * FROM {self.table_name} WHERE user_id LIKE (?)'
         
         anketa_info = list(cursor.execute(__SELECT_text, (vk_user_id,)).fetchall()[0])
-        
-        #print(f'{anketa_info=}')
         
         anketa_message = ''
         try:
@@ -119,6 +114,7 @@ class AnketaConstruct():
         
         connect.commit()
         connect.close()
+        
         return
     
     # Регистрация пользователя 
@@ -247,43 +243,64 @@ class AnketaConstruct():
         connect = sqlite3.connect(self.db.db_name+".db")
         cursor = connect.cursor()
         
-        #print(table_name,"<<<<<<<")
-        
         __TEXT = f'SELECT * FROM {table_name} ORDER BY RANDOM() LIMIT 1;'
-        
         try:
             random_anketa = list(cursor.execute(__TEXT).fetchall()[0])
-        
-        
             anketa_info = ""
 
             for index in range(2, len(random_anketa)):
                 anketa_info += f'{str(random_anketa[index]).capitalize()}\n'
-
 
             find_keyboard = VkKeyboard(one_time=True)
             find_keyboard.add_button("👍")
             find_keyboard.add_button("👎")
             find_keyboard.add_line()
             find_keyboard.add_button("Вернуться в меню поиска", color=VkKeyboardColor.NEGATIVE)
-
             self.__send_some_message(id=vk_user_id, some_text=anketa_info, keyboard=find_keyboard)
-                
-            #print(random_anketa[1])
             
             return (random_anketa[1])
         
         except(IndexError):
             self.kw == 'anketa_menu'
     
-     # Просмотр ответов на анкету
-    def response_anketa(self,)-> None:
-        pass
     
-    #'''
+     # Просмотр анкеты лайкнувшего 
+    def get_anketa_callback(self, vk_user_id)-> None:
+        
+        message = ''
+        table_name = self.callback_table
+        
+        if table_name is None:
+            pass
+        
+        response_keyboard = VkKeyboard(one_time=True)
+        response_keyboard.add_button("Далее")
+        response_keyboard.add_line()
+        response_keyboard.add_button("Вернуться в меню поиска",color=VkKeyboardColor.NEGATIVE)
+        
+        connect = sqlite3.connect(self.db.db_name+".db")
+        cursor = connect.cursor()
+        
+        # Получение случайной записи
+        random_record = cursor.execute(f"SELECT * FROM {table_name} WHERE  like_user_id LIKE {vk_user_id} ORDER BY RANDOM() LIMIT 1").fetchone()
+        print(random_record)
+        # Удаление записи
+        cursor.execute(f"DELETE FROM {table_name} WHERE id=?", (random_record[0],))
+        
+        for i in range(2, len(random_record)):
+            if i == 2: message += "https://vk.com/id" + str(random_record[i]) +'\n'
+            else:
+                info = random_record[i].split('>>splitWord<<')
+                for j in range(len(info)):
+                    message +=  str(info[j]).capitalize() + "\n"
+            
+        self.__send_some_message(vk_user_id, some_text=message, keyboard=response_keyboard)
+        
+        connect.commit()
+        connect.close()  
+        
     # Отправка лайка
     def post_callback(self, vk_user_id, like_anketa_id):
-        
         
         find_keyboard = VkKeyboard(one_time=True)
         find_keyboard.add_button("👍")
@@ -291,8 +308,6 @@ class AnketaConstruct():
         find_keyboard.add_line()
         find_keyboard.add_button("Вернуться в меню поиска", color=VkKeyboardColor.NEGATIVE)
         self.__send_some_message(id=vk_user_id, some_text="Заявка отправлена", keyboard=find_keyboard)
-        
-        #print(f"{like_anketa_id=}")
         
         anketa_table_name = self.table_name
         callback_table_name = self.callback_table
@@ -310,14 +325,11 @@ class AnketaConstruct():
         
         user_info = ''
         for index in range(3,len(like_user_info)):
-            user_info += str(like_user_info[index])+'/'
-
-        user_info += "><"
+            user_info += str(like_user_info[index]) + '>>splitWord<<'
         
         #check_info = f'SELECT * FROM {callback_table_name} WHERE user_id LIKE {vk_user_id}'
         check_info = f'SELECT user_id, like_user_id FROM {callback_table_name} WHERE user_id = {user_id} AND like_user_id = {like_anketa_id} GROUP BY user_id, like_user_id HAVING COUNT(user_id) > 1 AND COUNT(like_user_id) > 1;'
         info = cursor.execute(check_info).fetchall()
-        #print(info)
         
         # Отправляем информацию в таблицу обратной связи
         
@@ -327,10 +339,9 @@ class AnketaConstruct():
         
         connect.commit()
         connect.close()   
-    #'''
     
     # Просмотр отзывов на анкету
-    def get_anketa_callback(self, vk_user_id, ) -> None:
+    def get_anketa_callbacks_info(self, vk_user_id, ) -> None:
          
         table_name = self.callback_table
         
@@ -345,18 +356,16 @@ class AnketaConstruct():
         connect = sqlite3.connect(self.db.db_name+".db")
         cursor = connect.cursor()
         
-        text = f"SELECT * FROM {table_name} WHERE column_name = {vk_user_id}"
-        
+        text = f"SELECT * FROM {table_name} WHERE like_user_id = {vk_user_id}"
         callback = cursor.execute(text).fetchall()
         
-        if callback is None:
+        if len(callback) == 0:
             self.__send_some_message(id=vk_user_id, some_text="У вас еще нет откликов.")
+            self.kw = 'anketa_menu'
             return
         
         
-        #print(callback)
         counter_like = len(callback)
-        
         callback_text = f"У вас {counter_like} лайков. Просмотреть лайкнувших?"
         
         self.__send_some_message(id=vk_user_id, some_text=callback_text, keyboard=callback_keyboard)
@@ -376,7 +385,6 @@ class AnketaConstruct():
     
         # Создание анкеты   
         if (self.kw == 'create_anketa'):
-            #print("Отрабатываем")
             self.create_anketa(vk_user_id=vk_user_id, msg=msg)
     
         # Поиск 
@@ -386,16 +394,26 @@ class AnketaConstruct():
         
         if (self.kw == "find_anketa") :
             self.ank_id_info = self.start_find(vk_user_id=vk_user_id)
-            #print(self.ank_id_info)
             
-       # Постановка лайка и сохранение отклика
+       # Постановка лайка 
         if (msg =='👍'):
             self.kw = "like_anketa"
-                   
+          
+        # Сохранение отклика            
         if (self.kw == "like_anketa") :
             self.post_callback(vk_user_id=vk_user_id, like_anketa_id=self.ank_id_info)
             self.kw = "find_anketa"
         
+        # Просмотр заявок
+        if (msg == 'отклики'):
+            self.kw = 'callback_anketa'
+        
+        if (self.kw == 'callback_anketa'):
+            self.get_anketa_callbacks_info(vk_user_id)
+        
+        if (self.kw == 'callback_anketa') and ((msg == "посмотреть лайкнувших") or (msg == "далее")):
+            self.get_anketa_callback(vk_user_id)
+            
         # Отправка обратной связи о боте
         if msg == 'написать отзыв о боте':
             self.get_callback_link(vk_user_id)
@@ -404,7 +422,6 @@ class AnketaConstruct():
         # Получение информации об анкете
         if msg == 'моя анкета':
             self.kw = 'anketa_info'
-            #print("Проверка анкеты")
             self.get_anketa_info(vk_user_id=vk_user_id)
         
         # Редактирование анкеты

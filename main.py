@@ -72,7 +72,7 @@ section_kw = ""
 
 for event in longpool.listen():
     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-        
+
             msg = event.text.lower()
             id = event.user_id
             
@@ -142,7 +142,7 @@ for event in longpool.listen():
             # основное меню
             if (msg == '/menu') or (msg == "назад в меню"):
                 keyboard_menu = VkKeyboard(one_time=True)
-                keyboard_menu.add_button(label="Собрать или присоединиться к проектам", color=VkKeyboardColor.POSITIVE)
+                keyboard_menu.add_button(label="Cобрать или присоединиться к команде", color=VkKeyboardColor.POSITIVE)
                 keyboard_menu.add_line()
                 keyboard_menu.add_button(label="Найти или стать наставником")
                 keyboard_menu.add_line()
@@ -156,7 +156,7 @@ for event in longpool.listen():
                 
                 section_kw = ''
                           
-            if msg == 'собрать или присоединиться к проектам':
+            if msg == 'cобрать или присоединиться к команде':
                 keyboard_project_menu = VkKeyboard(one_time=True)
                 keyboard_project_menu.add_button(label="Собрать команду в проект", color=VkKeyboardColor.POSITIVE)
                 keyboard_project_menu.add_line()
@@ -193,6 +193,7 @@ for event in longpool.listen():
             
             if (msg == "присоединиться к проекту"):
                 
+                ''''''
                 section_kw = "find_project_anketa"
                 
                 anketa_setting_dict = copy.deepcopy(setting_dict)
@@ -208,6 +209,27 @@ for event in longpool.listen():
                                                  vk_session=vk_session,
                                                  longpool=longpool,
                                                  setting_dict=anketa_setting_dict)
+                
+                anketa_setting_dict = copy.deepcopy(setting_dict)
+                anketa_setting_dict['create_kw'] = 'присоединиться к проектам'
+
+                anketa_setting_dict['table_name'] = 'ProjectFinder'
+
+                anketa_setting_dict['instruction']['start'] = 'project_name'
+                anketa_setting_dict['instruction']['info'] = 'project_info'
+                anketa_setting_dict['instruction']['teams'] = 'find_teams'
+
+                anketa_setting_dict['message_instruction']['start'] = "Напишите название проекта"
+                anketa_setting_dict['message_instruction']['info'] = "Опишите ваш проект"
+                anketa_setting_dict['message_instruction']['teams'] = "Опишите кого вы ищете"
+                anketa_setting_dict['related_table'] = 'ProjectForm'
+                anketa_setting_dict['callback_table'] = 'CallbackProjectsFinderForm'
+                    
+                project_anketa = AnketaConstruct(session_api=session_api,
+                                                 vk_session=vk_session,
+                                                 longpool=longpool,
+                                                 setting_dict=anketa_setting_dict) 
+                
                 
             if section_kw == 'find_project_anketa':
                 project_finder_anketa.main(vk_user_id=id, msg=msg)
@@ -278,14 +300,4 @@ for event in longpool.listen():
                 keyboard_redact_my_anketa.add_line()
                 keyboard_redact_my_anketa.add_button(label="Назад в меню", color=VkKeyboardColor.NEGATIVE)
                 send_some_message(id, "Выбирай что меняем:", keyboard_redact_my_anketa)
-            
-            #if (msg =="qwe") or (msg == "приступаем к тестированию!") or (text_message.msg_list.count(msg) == 0):
-            #    
-            #    keyboard_test = VkKeyboard(one_time=True)
-            #    keyboard_test.add_button(label="приступаем к тестированию!", color=VkKeyboardColor.NEGATIVE)
-            #    send_some_message(id, "МЫ В ТЕСТОВОЙ ЗОНЕ, ЩА ВСЕ ПОЙДЕТ !!!", keyboard_test) 
-            #    
-            #    
-            #    
-            #    #anketa.main(msg=msg, vk_user_id=id)
                 
