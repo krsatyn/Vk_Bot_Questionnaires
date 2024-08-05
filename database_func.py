@@ -115,7 +115,7 @@ class DataBase():
             CREATE TABLE IF NOT EXISTS ProjectFinder(
             id INTEGER PRIMARY KEY,
             user_id TEXT,
-            name TEXT,
+            user_name TEXT,
             user_info TEXT 
             )                            
             ''')
@@ -143,7 +143,7 @@ class DataBase():
             user_id TEXT,
             like_user_id TEXT,
             like_user_name TEXT,
-            info TEXT 
+            user_info TEXT 
             )                            
             ''')
 
@@ -168,6 +168,7 @@ class DataBase():
             CREATE TABLE IF NOT EXISTS OneFormers (
             id INTEGER PRIMARY KEY,
             user_id TEXT ,
+            name TEXT,
             one_formers_info TEXT 
             )                            
             ''')
@@ -193,6 +194,7 @@ class DataBase():
             CREATE TABLE IF NOT EXISTS MentorsProfile (
             id INTEGER PRIMARY KEY,
             user_id TEXT ,
+            name TEXT,
             mentors_profile TEXT 
             )                            
             ''')
@@ -205,6 +207,115 @@ class DataBase():
             print(f"->Имя таблицы |таблицы анкета наставника|")
             print(f"->Название таблицы mentors_profile")
 
+    # Создание таблицы искателя наставника
+    def create_mentors_finder_profile_from_table(self,) -> None:
+        
+        '''Создание таблицы
+        |id:int key|user_id:str|name:str|user_info:str|
+        '''
+        
+        cursor = self.connect.cursor()
+        
+        try:
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS MentorsFinder(
+            id INTEGER PRIMARY KEY,
+            user_id TEXT,
+            user_name TEXT,
+            user_info TEXT 
+            )                            
+            ''')
+
+            self.connect.commit()
+            print(">Таблица MentorsFinder успешно создана")
+        
+        except sqlite3.OperationalError:
+            print("\n> Ошибка создания таблицы")
+            print(f"->Имя таблицы |Таблица пользователя для поиска Ментора|")
+            print(f"->Название таблицы MentorsFinder")
+        
+    
+    # Таблица для лайкнувших подаванов
+    def create_callback_mentor_finder_from_table(self,):
+        '''Создание таблицы
+        |id:int key|user_id:str|project_info:str|find_teams:str|
+        '''
+        
+        cursor = self.connect.cursor()
+        
+        try:
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS CallbackFinderMentorForm(
+            id INTEGER PRIMARY KEY,
+            user_id TEXT,
+            like_user_id TEXT,
+            like_user_name TEXT,
+            user_info TEXT 
+            )                            
+            ''')
+
+            self.connect.commit()
+            print(">Таблица CallbackFinderMentorForm успешно создана")
+
+        except sqlite3.OperationalError:
+            print("\n> Ошибка создания таблицы")
+            print(f"->Имя таблицы |Таблица для лайкнувших подаванов|")
+            print(f"->Название таблицы CallbackFinderMentorForm")
+            
+        
+    # Таблица для лайкнувших Менторов
+    def create_callback_mentor_from_table(self,):
+        '''Создание таблицы
+        |id:int key|user_id:str|project_info:str|find_teams:str|
+        '''
+        
+        cursor = self.connect.cursor()
+        
+        try:
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS CallbackMentorForm(
+            id INTEGER PRIMARY KEY,
+            user_id TEXT,
+            like_user_id TEXT,
+            like_user_name TEXT,
+            user_info TEXT 
+            )                            
+            ''')
+
+            self.connect.commit()
+            print(">Таблица CallbackMentorForm успешно создана")
+
+        except sqlite3.OperationalError:
+            print("\n> Ошибка создания таблицы")
+            print(f"->Имя таблицы |Таблица для лайкнувших Менторов|")
+            print(f"->Название таблицы CallbackMentorForm")
+            
+    def create_callback_partner_offers_from_table(self,) -> None:
+        '''Создание таблицы
+        |id:int key|user_id:str|project_info:str|find_teams:str|
+        '''
+        
+        cursor = self.connect.cursor()
+        
+        try:
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS CallbackOffersForm(
+            id INTEGER PRIMARY KEY,
+            user_id TEXT,
+            like_user_id TEXT,
+            like_user_name TEXT,
+            user_info TEXT 
+            )                            
+            ''')
+
+            self.connect.commit()
+            print(">Таблица CallbackOffersForm успешно создана")
+
+        except sqlite3.OperationalError:
+            print("\n> Ошибка создания таблицы")
+            print(f"->Имя таблицы |Таблица для Предложений|")
+            print(f"->Название таблицы CallbackOffersForm")
+           
     # Создание таблицы  партнерские предложения
     def create_partner_offers_from_table(self,) -> None:
         '''Создание таблицы
@@ -217,7 +328,8 @@ class DataBase():
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS PartnerOffers (
             id INTEGER PRIMARY KEY,
-            user_id TEXT ,
+            user_id TEXT,
+            user_name TEXT,
             partner_offers TEXT 
             )                            
             ''')
@@ -229,7 +341,34 @@ class DataBase():
             print("\n> Ошибка создания таблицы")
             print(f"->Имя таблицы |партнерские предложения|")
             print(f"->Название таблицы PartnerOffers")
+    
+    # Создание таблицы заявок в друзья
+    def create_callback_frends_from_table(self,):
+        '''Создание таблицы
+        |id:int key|user_id:str|project_info:str|find_teams:str|
+        '''
         
+        cursor = self.connect.cursor()
+        
+        try:
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS CallbackFrendsForm(
+            id INTEGER PRIMARY KEY,
+            user_id TEXT,
+            like_user_id TEXT,
+            like_user_name TEXT,
+            user_info TEXT 
+            )                            
+            ''')
+
+            self.connect.commit()
+            print(">Таблица CallbackFrendsForm успешно создана")
+
+        except sqlite3.OperationalError:
+            print("\n> Ошибка создания таблицы")
+            print(f"->Имя таблицы |Таблица для лайкнувших друзей|")
+            print(f"->Название таблицы CallbackFrendsForm")
+            
     # Создание таблицы просто друзья
     def create_just_friends_from_table(self,) -> None:
         '''Создание таблицы
@@ -242,8 +381,9 @@ class DataBase():
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS JustFriends (
             id INTEGER PRIMARY KEY,
-            user_id TEXT ,
-            just_friends_info TEXT 
+            user_id            TEXT,
+            user_name          TEXT,
+            just_friends_info  TEXT 
             )                            
             ''')
 
@@ -346,15 +486,39 @@ class DataBase():
         
         self.create_database(name_database=self.db_name)
         
+        # Создаём таблицу пользователя бота
         self.create_users_form_table()
+        
+        # Вкладка проекты
         self.create_projects_form_table()
-        self.create_one_formers_from_table()
-        self.create_partner_offers_from_table()
-        self.create_just_friends_from_table()
-        self.create_links_from_table()
         self.create_project_finder_from_table()
         self.create_callback_projects_form_table()
         self.create_callback_project_finder_from_table()
+        
+        # Вкладка менторы
+        self.create_mentors_profile_from_table()
+        self.create_mentors_finder_profile_from_table()
+        self.create_callback_mentor_from_table()
+        self.create_callback_mentor_finder_from_table()
+        
+        # Вкладка друзья 
+        self.create_just_friends_from_table()
+        self.create_callback_frends_from_table()
+        
+        # Вкладка партнерские предложения
+        self.create_partner_offers_from_table()
+        self.create_callback_partner_offers_from_table()
+        
+        
+        self.create_links_from_table()
+        
+        self.create_one_formers_from_table()
+        
+        
+        
+        # Таблицы обратной связи
+        
+        
         
     # Создание бекапов
     def create_backup(self, ) -> None:

@@ -181,7 +181,7 @@ for event in longpool.listen():
                     anketa_setting_dict['message_instruction']['info'] = "Опишите ваш проект"
                     anketa_setting_dict['message_instruction']['teams'] = "Опишите кого вы ищете"
                     anketa_setting_dict['related_table'] = 'ProjectFinder'
-                    anketa_setting_dict['callback_table'] = 'CallbackProjectsForm'
+                    anketa_setting_dict['callback_table'] = 'CallbackProjectsFinderForm'
                     
                     project_anketa = AnketaConstruct(session_api=session_api,
                                                      vk_session=vk_session,
@@ -201,36 +201,20 @@ for event in longpool.listen():
 
                 anketa_setting_dict['table_name'] = 'ProjectFinder'
 
-                anketa_setting_dict['instruction']['start'] = 'user_info'
+                anketa_setting_dict['instruction']['start'] = 'name'
+                anketa_setting_dict['instruction']['info'] = 'user_info'
 
-                anketa_setting_dict['message_instruction']['start'] = "Опишите себя"
+                anketa_setting_dict['message_instruction']['start'] = "Ваше Имя"
+                anketa_setting_dict['message_instruction']['info'] = "Опишите себя"
+                anketa_setting_dict['related_table'] = 'ProjectsForm'
+                anketa_setting_dict['callback_table'] = 'CallbackProjectsForm'
                 
+                    
                 project_finder_anketa = AnketaConstruct(session_api=session_api,
                                                  vk_session=vk_session,
                                                  longpool=longpool,
-                                                 setting_dict=anketa_setting_dict)
-                
-                anketa_setting_dict = copy.deepcopy(setting_dict)
-                anketa_setting_dict['create_kw'] = 'присоединиться к проектам'
-
-                anketa_setting_dict['table_name'] = 'ProjectFinder'
-
-                anketa_setting_dict['instruction']['start'] = 'project_name'
-                anketa_setting_dict['instruction']['info'] = 'project_info'
-                anketa_setting_dict['instruction']['teams'] = 'find_teams'
-
-                anketa_setting_dict['message_instruction']['start'] = "Напишите название проекта"
-                anketa_setting_dict['message_instruction']['info'] = "Опишите ваш проект"
-                anketa_setting_dict['message_instruction']['teams'] = "Опишите кого вы ищете"
-                anketa_setting_dict['related_table'] = 'ProjectForm'
-                anketa_setting_dict['callback_table'] = 'CallbackProjectsFinderForm'
-                    
-                project_anketa = AnketaConstruct(session_api=session_api,
-                                                 vk_session=vk_session,
-                                                 longpool=longpool,
                                                  setting_dict=anketa_setting_dict) 
-                
-                
+                        
             if section_kw == 'find_project_anketa':
                 project_finder_anketa.main(vk_user_id=id, msg=msg)
                 
@@ -245,24 +229,57 @@ for event in longpool.listen():
             
             if msg == 'найти наставника':
                 section_kw = 'find_mentor'
+                 
                 anketa_setting_dict = copy.deepcopy(setting_dict)
                 anketa_setting_dict['create_kw'] = 'найти наставника'
+
+                anketa_setting_dict['table_name'] = 'MentorsFinder'
                 
-                anketa_setting_dict['table_name'] = ''
+
+                anketa_setting_dict['instruction']['start'] = 'user_name'
+                anketa_setting_dict['instruction']['info'] = 'user_info'
+
+                anketa_setting_dict['message_instruction']['start'] = "Ваше Имя"
+                anketa_setting_dict['message_instruction']['info'] = "Опишите себя"
+                anketa_setting_dict['related_table'] = 'MentorsProfile'
+                anketa_setting_dict['callback_table'] = 'CallbackMentorForm'
                 
-                anketa_setting_dict['instruction']['start'] = ''
-                anketa_setting_dict['instruction'][''] = ''
-                
-                anketa_setting_dict['message_instruction']['start'] = ""
-                anketa_setting_dict['message_instruction'][''] = ""
-                
+                    
                 find_mentor_anketa = AnketaConstruct(session_api=session_api,
-                                                     vk_session=vk_session,
-                                                     longpool=longpool,
-                                                     setting_dict=anketa_setting_dict)
+                                                 vk_session=vk_session,
+                                                 longpool=longpool,
+                                                 setting_dict=anketa_setting_dict) 
             
             if section_kw == 'find_mentor':
                 find_mentor_anketa.main(vk_user_id=id, msg=msg)
+            
+            # Стать наставником
+            if msg == 'стать наставником':
+            #>>>>>      
+            
+                section_kw = 'get_mentor'
+                
+                anketa_setting_dict = copy.deepcopy(setting_dict)
+                anketa_setting_dict['create_kw'] = 'стать наставником'
+
+                anketa_setting_dict['table_name'] = 'MentorsProfile'
+
+                anketa_setting_dict['instruction']['start'] = 'name'
+                anketa_setting_dict['instruction']['info'] = 'mentors_profile'
+
+                anketa_setting_dict['message_instruction']['start'] = "Ваше Имя"
+                anketa_setting_dict['message_instruction']['info'] = "Опишите себя"
+                anketa_setting_dict['related_table'] = 'MentorsFinder'
+                anketa_setting_dict['callback_table'] = 'CallbackMentorForm'
+                
+                    
+                mentor_anketa = AnketaConstruct(session_api=session_api,
+                                                 vk_session=vk_session,
+                                                 longpool=longpool,
+                                                 setting_dict=anketa_setting_dict) 
+            
+            if section_kw == 'get_mentor':
+                mentor_anketa.main(vk_user_id=id, msg=msg)
                 
             if msg == 'найти друзей или однофорумчан':
                 keyboard_frends_and_forum_member_menu = VkKeyboard(one_time=True)
@@ -273,13 +290,64 @@ for event in longpool.listen():
                 keyboard_frends_and_forum_member_menu.add_button(label="Назад в меню", color=VkKeyboardColor.NEGATIVE)
                 send_some_message(id, "Ты в меню поиска друзей или однофорумчан\n(не думай что ты найдешь их тут, у тебя их не может быть даже в теории. KEKWA)", keyboard_frends_and_forum_member_menu)
             
+            if msg == 'найти друзей':
+                
+                section_kw = 'find_frends'
+                
+                anketa_setting_dict = copy.deepcopy(setting_dict)
+                anketa_setting_dict['create_kw'] = 'найти друзей'
+
+                anketa_setting_dict['table_name'] = 'JustFriends'
+
+                anketa_setting_dict['instruction']['start'] = 'user_name'
+                anketa_setting_dict['instruction']['info'] = 'just_friends_info'
+
+                anketa_setting_dict['message_instruction']['start'] = "Ваше Имя"
+                anketa_setting_dict['message_instruction']['info'] = "Опишите себя"
+                anketa_setting_dict['related_table'] = 'JustFriends'
+                anketa_setting_dict['callback_table'] = 'CallbackFrendsForm'
+                
+                    
+                find_frends_anketa = AnketaConstruct(session_api=session_api,
+                                                 vk_session=vk_session,
+                                                 longpool=longpool,
+                                                 setting_dict=anketa_setting_dict)
+            
+            if section_kw == 'find_frends':
+                find_frends_anketa.main(vk_user_id=id, msg=msg)
+            
             if msg == 'партнерские предложения для проектов':
                 keyboard_partner_offer_menu = VkKeyboard(one_time=True)
                 keyboard_partner_offer_menu.add_button(label="Предложить партнерку")
                 keyboard_partner_offer_menu.add_line()
                 keyboard_partner_offer_menu.add_button(label="Назад в меню", color=VkKeyboardColor.NEGATIVE)
                 send_some_message(id, "Ты в меню настроек партнерские предложений для проектов", keyboard_partner_offer_menu)
-  
+
+            if msg == 'предложить партнерку':
+                section_kw = 'add_offer'
+                
+                anketa_setting_dict = copy.deepcopy(setting_dict)
+                anketa_setting_dict['create_kw'] = 'предложить партнерку'
+
+                anketa_setting_dict['table_name'] = 'PartnerOffers'
+
+                anketa_setting_dict['instruction']['start'] = 'user_name'
+                anketa_setting_dict['instruction']['info'] = 'partner_offers'
+
+                anketa_setting_dict['message_instruction']['start'] = "Ваше Имя"
+                anketa_setting_dict['message_instruction']['info'] = "Ваше предложение"
+                anketa_setting_dict['related_table'] = 'PartnerOffers'
+                anketa_setting_dict['callback_table'] = 'CallbackOffersForm'
+                
+                    
+                offer_anketa = AnketaConstruct(session_api=session_api,
+                                                 vk_session=vk_session,
+                                                 longpool=longpool,
+                                                 setting_dict=anketa_setting_dict)
+            
+            if section_kw == 'add_offer':
+                offer_anketa.main(vk_user_id=id, msg=msg)
+            
             if msg == 'моя анкета' and section_kw=="":
                 keyboard_my_anketa_menu = VkKeyboard(one_time=True)
                 keyboard_my_anketa_menu.add_button(label="Редактировать мою анкету", color=VkKeyboardColor.POSITIVE)
