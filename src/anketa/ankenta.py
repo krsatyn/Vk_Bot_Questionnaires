@@ -135,8 +135,7 @@ class AnketaConstruct():
         cursor.execute(__INSERT_text, (vk_user_id,))
         connect.commit()
         connect.close()  
-    
-    
+       
     # Создание анкеты пользователя
     def create_anketa(self, vk_user_id, msg) -> None:
         
@@ -263,8 +262,7 @@ class AnketaConstruct():
         except(IndexError):
             self.kw == 'anketa_menu'
     
-    
-     # Просмотр анкеты лайкнувшего 
+    # Просмотр анкеты лайкнувшего 
     def get_anketa_callback(self, vk_user_id)-> None:
         
         message = ''

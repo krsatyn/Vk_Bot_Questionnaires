@@ -201,7 +201,7 @@ for event in longpool.listen():
 
                 anketa_setting_dict['table_name'] = 'ProjectFinder'
 
-                anketa_setting_dict['instruction']['start'] = 'name'
+                anketa_setting_dict['instruction']['start'] = 'user_name'
                 anketa_setting_dict['instruction']['info'] = 'user_info'
 
                 anketa_setting_dict['message_instruction']['start'] = "Ваше Имя"
